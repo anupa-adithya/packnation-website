@@ -572,7 +572,10 @@ h1,h2,h3,p{margin:0}
       <p class="sub">Share the size and quantity. We reply with a price within one business day.</p>
     </div>
     <div class="fcard">
-      <form id="qform">
+      <form id="qform" action="https://formsubmit.co/f8d8e5ba94b41c9095b434f0f3a7053c" method="POST">
+        <input type="hidden" name="_subject" value="New Pack Nation quote request">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
         <div class="fgrid">
           <div class="fld half"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required></div>
           <div class="fld half"><label for="f-phone">Phone number</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="\+?[0-9][0-9\s().-]{5,18}" title="Enter a valid phone number with 7 to 15 digits." required></div>
@@ -699,15 +702,10 @@ h1,h2,h3,p{margin:0}
   phoneField.addEventListener('change', validatePhone);
   form.addEventListener('submit', function(e){
     validatePhone();
-    if(!form.reportValidity()){e.preventDefault();return;}
-    e.preventDefault();
-    var name = document.getElementById('f-name').value.trim();
-    var phone = document.getElementById('f-phone').value.trim();
-    document.getElementById('successMsg').textContent = 'Thanks, ' + name + '. We’ll call you at ' + phone + ' with a price within one business day.';
-    form.style.display = 'none'; success.classList.add('show'); success.focus();
-  });
-  document.getElementById('again').addEventListener('click', function(e){
-    e.preventDefault(); form.reset(); form.style.display = ''; success.classList.remove('show');
+    if(!form.reportValidity()){
+      e.preventDefault();
+      return;
+    }
   });
 })();
 </script>
