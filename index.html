@@ -254,7 +254,9 @@ h1,h2,h3,p{margin:0}
 .foot{background:var(--grey);color:var(--muted);font-size:.8125rem;padding-block:24px 32px}
 .foot .wide{max-width:1080px;padding-inline:clamp(20px,5vw,32px)}
 .foot-top{padding-block:16px 20px;border-bottom:1px solid var(--line);color:var(--ink);font-size:.9rem}
-.foot-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding-block:24px 8px}
+.foot-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,3vw,32px);padding-block:24px 8px}
+.foot-brand{display:flex;align-items:flex-start}
+.foot-brand img{display:block;width:min(100%,170px);height:auto}
 .foot h4{margin:0 0 10px;font-size:.75rem;font-weight:600;color:var(--ink)}
 .foot ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .foot a{text-decoration:none}
@@ -618,6 +620,7 @@ h1,h2,h3,p{margin:0}
   <div class="wide">
     <p class="foot-top">Pack Nation. For all your packaging needs.</p>
     <div class="foot-cols">
+      <div class="foot-brand"><img src="pack-nation-logo.png" alt="Pack Nation" width="583" height="259" loading="lazy"></div>
       <div><h4>Explore</h4><ul><li><a href="#work">Our work</a></li><li><a href="#packages">Packages</a></li><li><a href="#services">Services</a></li><li><a href="#process">How it works</a></li><li><a href="#faq">FAQ</a></li></ul></div>
       <div><h4>Contact</h4><ul><li><a href="tel:+94723617427">+94 72 361 7427</a></li><li><a href="mailto:info.packnation@gmail.com">info.packnation@gmail.com</a></li></ul></div>
       <div><h4>Follow</h4><ul><li><a href="https://www.instagram.com/packnationsl/" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://www.facebook.com/profile.php?id=61596578002069" target="_blank" rel="noopener noreferrer">Facebook</a></li><li><a href="https://www.tiktok.com/@pack.nation1" target="_blank" rel="noopener noreferrer">TikTok</a></li></ul></div>
