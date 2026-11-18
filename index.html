@@ -245,7 +245,9 @@ h1,h2,h3,p{margin:0}
 .fsub small{color:var(--muted)}
 .success{display:none;gap:12px;padding:12px 0;justify-items:center;text-align:center}
 .success.show{display:grid}
+.success:not(.error) h3{color:#1B7A3A}
 .success p{color:var(--muted);max-width:28em}
+.success.error p{color:#B42318}
 @media (max-width:520px){.fld.half{grid-column:span 6}}
 
 /* footer */
@@ -561,7 +563,7 @@ h1,h2,h3,p{margin:0}
       <details><summary>Do you offer free delivery?</summary><p>Yes, delivery is free.</p></details>
       <details><summary>What happens if there’s a printing mistake?</summary><p>If the mistake is ours, we reprint your order for free.</p></details>
     </div>
-    <p class="faq-cta"><strong>Ready to start?</strong> <a href="https://wa.me/94713617427" target="_blank" rel="noopener noreferrer">Message us on WhatsApp</a> for a quote within 30 minutes.</p>
+    <p class="faq-cta"><strong>Ready to start?</strong> <a href="https://wa.me/94723617427" target="_blank" rel="noopener noreferrer">Message us on WhatsApp</a> for a quote within 30 minutes.</p>
   </div>
 </section>
 
@@ -598,11 +600,11 @@ h1,h2,h3,p{margin:0}
         </div>
         <div class="fsub">
           <button class="btn" type="submit">Request my quote</button>
-          <small>Prefer to talk? Call <a href="tel:+94713617427">+94 71 361 7427</a></small>
+          <small>Prefer to talk? Call <a href="tel:+94723617427">+94 72 361 7427</a></small>
         </div>
       </form>
-      <div class="success" id="success" role="status" tabindex="-1">
-        <h3 class="h3">Request received</h3>
+      <div class="success" id="success" role="status" aria-live="polite" tabindex="-1">
+        <h3 class="h3" id="quoteResultTitle">Request received</h3>
         <p id="successMsg"></p>
         <a class="link" href="#" id="again">Send another request</a>
       </div>
@@ -617,16 +619,16 @@ h1,h2,h3,p{margin:0}
     <p class="foot-top">Pack Nation. For all your packaging needs.</p>
     <div class="foot-cols">
       <div><h4>Explore</h4><ul><li><a href="#work">Our work</a></li><li><a href="#packages">Packages</a></li><li><a href="#services">Services</a></li><li><a href="#process">How it works</a></li><li><a href="#faq">FAQ</a></li></ul></div>
-      <div><h4>Contact</h4><ul><li><a href="tel:+94713617427">+94 71 361 7427</a></li><li><a href="mailto:info.packnation@gmail.com">info.packnation@gmail.com</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="tel:+94723617427">+94 72 361 7427</a></li><li><a href="mailto:info.packnation@gmail.com">info.packnation@gmail.com</a></li></ul></div>
       <div><h4>Follow</h4><ul><li><a href="https://www.instagram.com/packnationsl/" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://www.facebook.com/profile.php?id=61596578002069" target="_blank" rel="noopener noreferrer">Facebook</a></li><li><a href="https://www.tiktok.com/@pack.nation1" target="_blank" rel="noopener noreferrer">TikTok</a></li></ul></div>
     </div>
     <div class="foot-note"><span>© 2026 Pack Nation. All rights reserved.</span><span>Privacy policy &amp; terms</span></div>
   </div>
 </footer>
 
-<a class="wa" href="https://wa.me/94713617427" aria-label="Chat on WhatsApp">
+<a class="wa" href="https://wa.me/94723617427" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9.500L4 22v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
-  <span>Chat with us</span>
+  <span>Chat on WhatsApp</span>
 </a>
 
 <script>
@@ -692,7 +694,9 @@ h1,h2,h3,p{margin:0}
 
   /* quote form */
   var form = document.getElementById('qform'), success = document.getElementById('success');
-  var phoneField = document.getElementById('f-phone');
+  var phoneField = document.getElementById('f-phone'), successMsg = document.getElementById('successMsg');
+  var resultTitle = document.getElementById('quoteResultTitle'), again = document.getElementById('again');
+  var submitButton = form.querySelector('[type="submit"]'), submitLabel = submitButton.textContent;
   function validatePhone(){
     var digits = phoneField.value.replace(/\D/g, '');
     phoneField.setCustomValidity(phoneField.value && (digits.length < 7 || digits.length > 15) ? 'Enter a valid phone number with 7 to 15 digits.' : '');
@@ -700,11 +704,51 @@ h1,h2,h3,p{margin:0}
   phoneField.addEventListener('input', validatePhone);
   phoneField.addEventListener('change', validatePhone);
   form.addEventListener('submit', function(e){
+    e.preventDefault();
     validatePhone();
     if(!form.reportValidity()){
-      e.preventDefault();
       return;
     }
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending…';
+    success.classList.remove('show', 'error');
+    fetch(form.action, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      body: JSON.stringify(Object.fromEntries(new FormData(form)))
+    }).then(function(response){
+      return response.json().then(function(data){ return {response:response, data:data}; });
+    }).then(function(result){
+      var response = result.response, data = result.data;
+      if(!response.ok || !data.success) throw new Error(data.message || (data.body && data.body.message) || 'We could not send your request. Please try again.');
+      form.hidden = true;
+      resultTitle.textContent = 'Request received';
+      successMsg.textContent = 'Thanks for your quote request. We’ll be in touch within one business day.';
+      again.textContent = 'Send another request';
+      success.setAttribute('role', 'status');
+      success.classList.remove('error');
+      success.classList.add('show');
+      success.focus();
+    }).catch(function(error){
+      resultTitle.textContent = 'Request not sent';
+      successMsg.textContent = error.message || 'Something went wrong. Please check your connection and try again.';
+      again.textContent = 'Try again';
+      success.setAttribute('role', 'alert');
+      success.classList.add('error', 'show');
+    }).then(function(){
+      submitButton.disabled = false;
+      submitButton.textContent = submitLabel;
+    });
+  });
+  again.addEventListener('click', function(e){
+    e.preventDefault();
+    success.classList.remove('show', 'error');
+    if(form.hidden){
+      form.reset();
+      phoneField.setCustomValidity('');
+      form.hidden = false;
+    }
+    document.getElementById('f-name').focus();
   });
 })();
 </script>
